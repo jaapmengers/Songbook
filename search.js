@@ -17,7 +17,13 @@ exports.getChordsForArtistAndSong = function(artist, song) {
       results.push(res);
     })
     .done(() => resolve(results))
-    // .log(console.log)
     .error(err => reject(err));
   });
+}
+
+exports.getTopChords = function(results) {
+  const res = results.filter(x => !!x.song & !!x.rating)
+                .sort((a, b) => a.rating < b.rating);
+
+  return res[0];
 }

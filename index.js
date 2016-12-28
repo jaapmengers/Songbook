@@ -1,19 +1,15 @@
 const trackinfo = require('./trackinfo.js')
 const search = require('./search.js');
-var childProc = require('child_process');
+const Rx = require('rxjs/Rx');
+const childProc = require('child_process');
 
-trackinfo.getCurrentTrack()
-  .then(track => search.getChordsForArtistAndSong(track.artist, track.name))
-  .then(results => {
-    return results
-      .filter(x => !!x.song & !!x.rating)
-      .sort((a, b) => a.rating < b.rating);
-  })
-  .then(x => {
-    if(x[0]) {
-      childProc.exec(`open -a "Google Chrome" ${x[0].link}`);
-    } else {
-      console.log('Geen resultaten :\'(');
+Rx.Observable.interval(2000)
+  .flatMap(trackinfo.getCurrentTrack)
+  .distinctUntilChanged(null, x => x.artist + x.name)
+  .flatMap(track => search.getChordsForArtistAndSong(track.artist, track.name).catch(_ => Promise.resolve([])))
+  .map(search.getTopChords)
+  .subscribe(chords => {
+    if(chords) {
+      childProc.exec(`open -a "Google Chrome" ${chords.link}`);
     }
-  })
-  .catch(err => cosole.error('Error', err));
+  });

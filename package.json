@@ -1,5 +1,5 @@
 {
-  "name": "chordify",
+  "name": "songbook",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "osmosis": "^1.1.2",
+    "rxjs": "^5.0.2",
     "spotify-node-applescript": "^1.0.0"
   }
 }
