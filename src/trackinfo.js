@@ -1,6 +1,6 @@
 const spotify = require('spotify-node-applescript');
 
-exports.getCurrentTrack = function() {
+function getCurrentTrack() {
   return new Promise((resolve, reject) => {
     spotify.getTrack((err, track) => {
       if(err) {
@@ -10,3 +10,5 @@ exports.getCurrentTrack = function() {
     });
   });
 }
+
+export { getCurrentTrack };
