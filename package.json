@@ -1,0 +1,16 @@
+{
+  "name": "chordify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "search": "node search.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "osmosis": "^1.1.2",
+    "spotify-node-applescript": "^1.0.0"
+  }
+}
