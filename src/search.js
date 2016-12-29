@@ -10,6 +10,11 @@ function getChordsForArtistAndSong(artist, song) {
 
     osmosis
     .get(url)
+    // Let's assume search only ever yields one artist because we explicitly provide it in the query.
+    // Due to the structure of the site, support for multiple artists is tricky.
+    .set({
+      'artist': '.search_art'
+    })
     .find('.tresults > tr')
     .set({
       'song': '.search-version--td > .search-version--link',
