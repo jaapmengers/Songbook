@@ -45,7 +45,7 @@ app.on('ready', function () {
         protocol: 'file:',
         slashes: true
     }));
-
+    //
     // if (env.name === 'development') {
     //     mainWindow.openDevTools();
     // }
