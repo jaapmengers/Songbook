@@ -12,8 +12,8 @@ function startListening() {
   const timeObservable = Rx.Observable.interval(1000)
     .flatMap(x => getCurrentTime().catch(y => Rx.Observable.empty()));
 
-  Rx.Observable.combineLatest(trackObservable, timeObservable, (track, time) =>  (1000 * time) / track.duration)
-    .subscribe(setScrollFraction);
+  // Rx.Observable.combineLatest(trackObservable, timeObservable, (track, time) =>  (1000 * time) / track.duration)
+  //   .subscribe(setScrollFraction);
 
   trackObservable.flatMap(track => getChordsForArtistAndSong(track.artist, track.name).catch(_ => Promise.resolve([])))
   .map(getTopChordsPage)
