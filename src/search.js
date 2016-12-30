@@ -17,15 +17,15 @@ function getChordsForArtistAndSong(artist, song) {
     })
     .find('.tresults > tr')
     .set({
-      'song': '.search-version--td > .search-version--link',
-      'link': '.search-version--td > .search-version--link > a@href',
+      'song': '.search-version--td .result-link',
+      'link': '.search-version--td .result-link@href',
       'rating': '.ratdig'
     })
     .then((i, item) => {
       let res = Object.assign({}, item, { rating: item.rating ? parseInt(item.rating) : 0 });
       results.push(res);
     })
-    .done(() => resolve(results))
+    .done(() => resolve(orderByRating(results)))
     .error(err => reject(err));
   });
 }
@@ -41,19 +41,21 @@ function strip(str) {
   return '';
 }
 
-function getTopChordsPage(results) {
-  const res = results.filter(x => !!x.song & !!x.rating)
-                .sort((a, b) => a.rating < b.rating);
-
-  return res[0];
+function orderByRating(results) {
+  return results.filter(x => !!x.song & !!x.rating)
+    .sort((a, b) => a.rating < b.rating);
 }
 
-function getChords(url) {
+function getTopChordsPage(results) {
+  return results[0];
+}
+
+function getChords(chords) {
   return new Promise((resolve, reject) => {
     osmosis
-    .get(url)
+    .get(chords.link)
     .find('pre.js-tab-content')
-    .then(i => resolve(i.innerHTML))
+    .then(i => resolve(Object.assign({}, chords, { html: i.innerHTML })))
     .error(err => reject(err));
   });
 }

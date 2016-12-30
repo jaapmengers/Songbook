@@ -9,8 +9,15 @@
   </head>
   <body id="body">
     <div id="app">
-      <pre v-if="chords" v-html="chords" class="chords">
-      </pre>
+      <div id="chord-container" v-if="chords" >
+        <pre v-html="chords.html" class="chords">
+        </pre>
+        <ul>
+          <li v-for="result in highlightedResults" v-on:click="open(result)" v-bind:class="{ active: result.active }">
+            {{ result.song }} [{{ result.rating }}]
+          </li>
+        </ul>
+      </div>
       <div v-else class="centered">
         <div class="notfound">No chords found for this song :(</div>
       </div>

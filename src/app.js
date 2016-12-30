@@ -14,13 +14,13 @@ function startListening() {
   const timeObservable = Rx.Observable.interval(1000)
     .flatMap(x => getCurrentTime().catch(y => Rx.Observable.empty()));
 
-  // Rx.Observable.combineLatest(trackObservable, timeObservable, (track, time) =>  (1000 * time) / track.duration)
-  //   .subscribe(setScrollFraction);
+  const searchResultsObservable = trackObservable
+    .flatMap(track => getChordsForArtistAndSong(track.artist, track.name).catch(_ => Promise.resolve([])))
 
-  trackObservable.flatMap(track => getChordsForArtistAndSong(track.artist, track.name).catch(_ => Promise.resolve([])))
-  .map(getTopChordsPage)
-  .flatMap(x => !!x ? getChords(x.link): Rx.Observable.of(null))
-  .subscribe(showChords);
+  searchResultsObservable.map(getTopChordsPage)
+    .subscribe(getAndShowChords);
+
+  searchResultsObservable.subscribe(showAllResults);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -28,23 +28,30 @@ document.addEventListener('DOMContentLoaded', function () {
     el: '#app',
     data: {
       chords: null,
+      results: []
+    },
+    computed: {
+      highlightedResults: function() {
+        return this.results.map(x => Object.assign({}, x, { active: !!this.chords ? x.link === this.chords.link : false }) )
+      }
+    },
+    methods: {
+      open: getAndShowChords
     }
   });
 
   startListening();
 });
 
-function setScrollFraction(fraction) {
-  var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  const body = document.getElementById('body');
-
-  body.scrollTop = height * fraction;
+function getAndShowChords(result) {
+  getChords(result).then(showChords)
+    .catch(x => showChords(null))
 }
 
-function showChords(innerHtml) {
-  if(!innerHtml) {
-    app.chords = null;
-  } else {
-    app.chords = innerHtml;
-  }
+function showChords(chords) {
+  app.chords = chords;
+}
+
+function showAllResults(results) {
+  app.results = results;
 }
