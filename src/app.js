@@ -4,6 +4,8 @@ import './utils.js'
 const Rx = require('rxjs/Rx');
 const childProc = require('child_process');
 
+var app;
+
 function startListening() {
   const trackObservable = Rx.Observable.interval(1000)
     .flatMap(x => getCurrentTrack().catch(y => Rx.Observable.empty()))
@@ -22,6 +24,13 @@ function startListening() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  app = new Vue({
+    el: '#app',
+    data: {
+      chords: null,
+    }
+  });
+
   startListening();
 });
 
@@ -34,20 +43,8 @@ function setScrollFraction(fraction) {
 
 function showChords(innerHtml) {
   if(!innerHtml) {
-    showNotFound();
+    app.chords = null;
   } else {
-    setChordHtml(innerHtml);
+    app.chords = innerHtml;
   }
-}
-
-function setChordHtml(innerHtml) {
-  document.getElementById('chords').removeClass('hidden');
-  document.getElementById('centered').addClass('hidden');
-
-  document.getElementById('chords').innerHTML = innerHtml;
-}
-
-function showNotFound() {
-  document.getElementById('chords').addClass('hidden');
-  document.getElementById('centered').removeClass('hidden');
 }
