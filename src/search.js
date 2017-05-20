@@ -71,7 +71,8 @@ function retrieveCapoInfo(metadata) {
 
   const regex = /([a-zA-Z0-9]*\sfret)/g;
   const results = metadata.match(regex);
-  if(results.length < 1) {
+
+  if(!results) {
     return { };
   }
 
