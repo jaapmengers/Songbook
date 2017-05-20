@@ -15,7 +15,8 @@ function startListening() {
 
   const searchResultsObservable = trackObservable
     .do(x => console.log('New track', x))
-    .flatMap(track => getChordsForArtistAndSong(track.artist, track.name).catch(_ => Promise.resolve([])))
+    .map(track => getChordsForArtistAndSong(track.artist, track.name).catch(_ => Promise.resolve([])))
+    .switch();
 
   searchResultsObservable.map(getTopChordsPage)
     .subscribe(getAndShowChords);
@@ -47,7 +48,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getAndShowChords(result) {
   getChords(result).then(showChords)
-    .catch(console.error)
+    .catch(err => {
+      console.error(err);
+      showChords(null);
+    });
 }
 
 function openInBrowser(result) {

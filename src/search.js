@@ -52,6 +52,10 @@ function getTopChordsPage(results) {
 
 function getChords(chords) {
   return new Promise((resolve, reject) => {
+    if(!chords) {
+      reject(new Error('No chords found'));
+    }
+
     osmosis
       .get(chords.link)
       .find('.b-tab-meta')
