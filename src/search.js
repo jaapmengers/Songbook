@@ -5,8 +5,8 @@ function getChordsForArtistAndSong(artist, song) {
   return new Promise((resolve, reject) => {
     // Strip things like [...] - 2000 digital remaster off. We take the false positives for granted
     const url = `https://www.ultimate-guitar.com/search.php?view_state=advanced&band_name=${artist}&song_name=${strip(song)}&type%5B%5D=300&version_la=`;
-
-    console.log('URL', url);
+    //
+    // console.log('URL', url);
 
     osmosis
     .get(url)
@@ -42,7 +42,7 @@ function strip(str) {
 }
 
 function orderByRating(results) {
-  return results.filter(x => !!x.song & !!x.rating)
+  return results.filter(x => !!x.song)
     .sort((a, b) => a.rating < b.rating);
 }
 
@@ -53,11 +53,29 @@ function getTopChordsPage(results) {
 function getChords(chords) {
   return new Promise((resolve, reject) => {
     osmosis
-    .get(chords.link)
-    .find('pre.js-tab-content')
-    .then(i => resolve(Object.assign({}, chords, { html: i.innerHTML })))
-    .error(err => reject(err));
+      .get(chords.link)
+      .find('.b-tab-meta')
+      .set('metadata')
+      .find('pre.js-tab-content')
+      .then((i, data) => {
+        resolve(Object.assign({}, chords, { html: i.innerHTML }, retrieveCapoInfo(data.metadata)))
+      })
+      .error(err => reject(err));
   });
+}
+
+function retrieveCapoInfo(metadata) {
+  if(!metadata) {
+    return { };
+  }
+
+  const regex = /([a-zA-Z0-9]*\sfret)/g;
+  const results = metadata.match(regex);
+  if(results.length < 1) {
+    return { };
+  }
+
+  return { capo: results[0] };
 }
 
 export { getChordsForArtistAndSong, getTopChordsPage, getChords };

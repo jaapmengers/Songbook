@@ -3,18 +3,18 @@ import { getChordsForArtistAndSong, getTopChordsPage, getChords } from './search
 import './utils.js'
 const Rx = require('rxjs/Rx');
 const childProc = require('child_process');
+const {shell} = require('electron');
 
 var app;
 
 function startListening() {
   const trackObservable = Rx.Observable.interval(1000)
     .flatMap(x => getCurrentTrack().catch(y => Rx.Observable.empty()))
+    .filter(x => !!x)
     .distinctUntilChanged(null, x => x.artist + x.name);
 
-  const timeObservable = Rx.Observable.interval(1000)
-    .flatMap(x => getCurrentTime().catch(y => Rx.Observable.empty()));
-
   const searchResultsObservable = trackObservable
+    .do(x => console.log('New track', x))
     .flatMap(track => getChordsForArtistAndSong(track.artist, track.name).catch(_ => Promise.resolve([])))
 
   searchResultsObservable.map(getTopChordsPage)
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
   app = new Vue({
     el: '#app',
     data: {
+      capo: null,
       chords: null,
       results: []
     },
@@ -36,7 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
     methods: {
-      open: getAndShowChords
+      open: getAndShowChords,
+      openInBrowser: openInBrowser
     }
   });
 
@@ -45,7 +47,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getAndShowChords(result) {
   getChords(result).then(showChords)
-    .catch(x => showChords(null))
+    .catch(console.error)
+}
+
+function openInBrowser(result) {
+  shell.openExternal(result.link)
 }
 
 function showChords(chords) {

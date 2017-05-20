@@ -10,6 +10,7 @@
   <body id="body">
     <div id="app">
       <div id="chord-container" v-if="chords" >
+        <pre v-if="chords.capo" class="capo">Capo {{ chords.capo }}</pre>
         <pre v-html="chords.html" class="chords">
         </pre>
         <ul>
@@ -17,6 +18,9 @@
             {{ result.song }} [{{ result.rating }}]
           </li>
         </ul>
+        <a v-on:click="openInBrowser(chords)" class="openLink">
+          Open on ultimate-guitar.com
+        </a>
       </div>
       <div v-else class="centered">
         <div class="notfound">No chords found for this song :(</div>
