@@ -58,6 +58,7 @@ function getChords(chords) {
 
     osmosis
       .get(chords.link)
+      .log(console.log)
       .find('.b-tab-meta')
       .set('metadata')
       .find('pre.js-tab-content')
