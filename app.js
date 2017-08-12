@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // handler for the CastMessageBus message event
   window.messageBus.onMessage = function(event) {
-    let chords = event.data;
+    let chords = JSON.parse(event.data);
 
     console.log(typeof(chords));
 
