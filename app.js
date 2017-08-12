@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     el: '#app',
     data: {
       capo: null,
-      chords: null,
+      chords: [],
       results: []
     }
   });
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     "capo":"3rd fret"
   };
 
-  app.chords = chords;
+  app.chords = Object.assign({}, chords, { parts: chords.html.split('\n\n')});
 
   // cast.receiver.logger.setLevelValue(0);
   // window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
