@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
   app = new Vue({
     el: '#app',
     data: {
-      debug: null,
       capo: null,
       chords: [],
       results: []
@@ -59,17 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
   window.messageBus.onMessage = function(event) {
     let chords = event.data;
 
-    app.debug = typeOf(chords);
+    app.chords = Object.assign({}, chords, { parts: chords.html.split('\n\n')});
 
-    // displayText(typeOf(chords))
-
-    // app.chords = Object.assign({}, chords, { parts: chords.html.split('\n\n')});
-
-    // console.log('Message [' + event.senderId + ']: ' + event.data);
-    // // display the message from the sender
-    // displayText(event.data);
-    // inform all senders on the CastMessageBus of the incoming message event
-    // sender message listener will be invoked
     window.messageBus.send(event.senderId, event.data);
   }
 
