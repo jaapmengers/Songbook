@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
   window.messageBus.onMessage = function(event) {
     let chords = event.data;
 
+    console.log(typeof(chords));
+
     app.chords = Object.assign({}, chords, { parts: chords.html.split('\n\n')});
 
     window.messageBus.send(event.senderId, event.data);
