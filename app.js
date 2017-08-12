@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   app = new Vue({
     el: '#app',
     data: {
+      debug: null,
       capo: null,
       chords: [],
       results: []
@@ -58,7 +59,11 @@ document.addEventListener('DOMContentLoaded', function () {
   window.messageBus.onMessage = function(event) {
     let chords = event.data;
 
-    app.chords = Object.assign({}, chords, { parts: chords.html.split('\n\n')});
+    app.debug = typeOf(chords);
+
+    // displayText(typeOf(chords))
+
+    // app.chords = Object.assign({}, chords, { parts: chords.html.split('\n\n')});
 
     // console.log('Message [' + event.senderId + ']: ' + event.data);
     // // display the message from the sender
