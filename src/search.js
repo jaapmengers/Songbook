@@ -12,8 +12,6 @@ function getChordsForArtistAndSong(artist, song) {
         return;
       }
 
-      console.log(tabs);
-
       resolve(orderByRating(tabs));
     });
   });
@@ -46,7 +44,7 @@ function getChords(chords) {
 
     ugs.get(chords.url, (error, tab) => {
       if (error) {
-        console.log(error);
+        console.error(error);
         reject(error);
         return;
       }
