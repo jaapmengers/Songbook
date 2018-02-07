@@ -15,7 +15,7 @@
         </pre>
         <ul>
           <li v-for="result in highlightedResults" v-on:click="open(result)" v-bind:class="{ active: result.active }">
-            {{ result.song }} [{{ result.rating }}]
+            {{ result.artist }} - {{ result.name }} [{{ result.rating }}]
           </li>
         </ul>
         <a v-on:click="openInBrowser(chords)" class="openLink">

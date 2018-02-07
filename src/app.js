@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     computed: {
       highlightedResults: function() {
-        return this.results.map(x => Object.assign({}, x, { active: !!this.chords ? x.link === this.chords.link : false }) )
+        return this.results.map(x => Object.assign({}, x, { active: !!this.chords ? x.url === this.chords.url : false }) )
       }
     },
     methods: {
@@ -55,7 +55,7 @@ function getAndShowChords(result) {
 }
 
 function openInBrowser(result) {
-  shell.openExternal(result.link)
+  shell.openExternal(result.url)
 }
 
 function showChords(chords) {

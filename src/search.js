@@ -1,32 +1,21 @@
-const osmosis = require('osmosis');
+const ugs = require('ultimate-guitar-scraper');
 
 function getChordsForArtistAndSong(artist, song) {
-  const results = [];
   return new Promise((resolve, reject) => {
-    // Strip things like [...] - 2000 digital remaster off. We take the false positives for granted
-    const url = `https://www.ultimate-guitar.com/search.php?view_state=advanced&band_name=${artist}&song_name=${strip(song)}&type%5B%5D=300&version_la=`;
-    //
-    // console.log('URL', url);
+    ugs.search({
+      query: `${artist} - ${strip(song)}`,
+      page: 1,
+      type: ['Chords']
+    }, (error, tabs) => {
+      if(error) {
+        reject(error);
+        return;
+      }
 
-    osmosis
-    .get(url)
-    // Let's assume search only ever yields one artist because we explicitly provide it in the query.
-    // Due to the structure of the site, support for multiple artists is tricky.
-    .set({
-      'artist': '.search_art'
-    })
-    .find('.tresults > tr')
-    .set({
-      'song': '.search-version--td .result-link',
-      'link': '.search-version--td .result-link@href',
-      'rating': '.ratdig'
-    })
-    .then((i, item) => {
-      let res = Object.assign({}, item, { rating: item.rating ? parseInt(item.rating) : 0 });
-      results.push(res);
-    })
-    .done(() => resolve(orderByRating(results)))
-    .error(err => reject(err));
+      console.log(tabs);
+
+      resolve(orderByRating(tabs));
+    });
   });
 }
 
@@ -42,8 +31,7 @@ function strip(str) {
 }
 
 function orderByRating(results) {
-  return results.filter(x => !!x.song)
-    .sort((a, b) => a.rating < b.rating);
+  return results.sort((a, b) => a.rating < b.rating);
 }
 
 function getTopChordsPage(results) {
@@ -56,16 +44,20 @@ function getChords(chords) {
       reject(new Error('No chords found'));
     }
 
-    osmosis
-      .get(chords.link)
-      .log(console.log)
-      .find('.b-tab-meta')
-      .set('metadata')
-      .find('pre.js-tab-content')
-      .then((i, data) => {
-        resolve(Object.assign({}, chords, { html: i.innerHTML }, retrieveCapoInfo(data.metadata)))
-      })
-      .error(err => reject(err));
+    ugs.get(chords.url, (error, tab) => {
+      if (error) {
+        console.log(error);
+        reject(error);
+        return;
+      }
+
+      if(!tab.content.text) {
+        reject(new Error('Tab content not found'));
+      }
+
+      resolve(Object.assign({}, chords, { html: applyBoldFormattingForChords(tab.content.text) }, retrieveCapoInfo(tab.content.text)));
+      return;
+    });
   });
 }
 
@@ -82,6 +74,12 @@ function retrieveCapoInfo(metadata) {
   }
 
   return { capo: results[0] };
+}
+
+function applyBoldFormattingForChords(input) {
+  return input
+    .replace(new RegExp(/\[ch\]/g, 'g'), '<b>')
+    .replace(new RegExp(/\[\/ch\]/g, 'g'), '</b>')
 }
 
 export { getChordsForArtistAndSong, getTopChordsPage, getChords };
