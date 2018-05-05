@@ -9,7 +9,12 @@ function getKeyForTrack(trackId) {
     return spotifyApi.clientCredentialsGrant()
         .then(data => spotifyApi.setAccessToken(data.body['access_token']))
         .then(_ => spotifyApi.getAudioAnalysisForTrack(trackId))
-        .then(resp => ({ key: resp.body.track.key, confidence: resp.body.track.key_confidence }) );
+        .then(resp => ({ 
+            key: resp.body.track.key, 
+            key_confidence: resp.body.track.key_confidence,
+            mode: resp.body.track.mode, 
+            mode_confidence: resp.body.track.mode_confidence
+        }));
 }
 
 export { getKeyForTrack };

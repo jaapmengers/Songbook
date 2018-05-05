@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
       capo: null,
       key: null,
       key_confidence: null,
+      mode_confidence: null,
       chords: null,
       results: []
     },
@@ -80,24 +81,32 @@ function showAllResults(results) {
 }
 
 function showKey(keyInfo) {
-  keyInfo.then(x => {
-    app.key =  ['C / Am',
-                  'Db / Bbm',
-                  'D / Bm',
-                  'Eb / Cm',
-                  'E / C#m',
-                  'F / Dm',
-                  'F# / D#m',
-                  'G / Em',
-                  'Ab / Fm',
-                  'A / F#m',
-                  'Bb / Gm',
-                  'B / G#m'][x.key]
 
-    app.key_confidence = x.confidence;
+  const keys =['C',
+                'C#',
+                'D',
+                'D#',
+                'E',
+                'F',
+                'F#',
+                'G',
+                'G#',
+                'A',
+                'A#',
+                'B'];
+
+  const fn = (n) => keys[n < 0 ? 12 + n : n];
+
+  keyInfo.then(x => {
+    app.key = x.mode === 1 ? `${keys[x.key]} / ${fn(x.key - 3)}m` : `${keys[x.key]}m / ${fn(x.key + 3)}`;
+    app.mode_confidence = x.mode_confidence
+    app.key_confidence = x.key_confidence;
   }).catch(x => {
     console.error('Error getting key', x);
+
     app.key = null;
+    app.mode_confidence = null;
     app.key_confidence = null;
   });
 }
+
