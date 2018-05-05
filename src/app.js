@@ -95,7 +95,7 @@ function showKey(keyInfo) {
                 'A#',
                 'B'];
 
-  const fn = (n) => keys[n < 0 ? 12 + n : n];
+  const fn = (n) => keys[(n < 0 ? 12 + n : n) % 12];
 
   keyInfo.then(x => {
     app.key = x.mode === 1 ? `${keys[x.key]} / ${fn(x.key - 3)}m` : `${keys[x.key]}m / ${fn(x.key + 3)}`;
