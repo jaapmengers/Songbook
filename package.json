@@ -30,8 +30,10 @@
   },
   "dependencies": {
     "fs-jetpack": "^0.10.2",
+    "node-fetch": "^2.1.2",
     "rxjs": "^5.0.2",
     "spotify-node-applescript": "^1.0.0",
+    "spotify-web-api-node": "^3.1.1",
     "ultimate-guitar-scraper": "^1.0.0"
   },
   "devDependencies": {
