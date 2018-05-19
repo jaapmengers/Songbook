@@ -9,8 +9,8 @@
   </head>
   <body id="body">
     <div id="app">
+      <pre v-if="key" class="capo">Key: {{ key }} ({{ key_confidence }} / {{ mode_confidence }})</pre>
       <div id="chord-container" v-if="chords" >
-        <pre v-if="key" class="capo">Key: {{ key }} ({{ key_confidence }} / {{ mode_confidence }})</pre>
         <pre v-if="chords.capo" class="capo">Capo {{ chords.capo }}</pre>
         <pre v-html="chords.html" class="chords">
         </pre>
